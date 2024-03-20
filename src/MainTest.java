@@ -1,31 +1,35 @@
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
-import java.time.OffsetDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.DateTimeException;
 
 public class MainTest {
 
     @Test
-    public void testDateFormatting() {
+    public void testFormattedDate() {
         String dateString = "2023-03-01T13:00:00Z";
-        OffsetDateTime dateTime = OffsetDateTime.parse(dateString);
-
-        String formattedDate = dateTime.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"));
-
-        assertEquals("01 marzo 2023", formattedDate);
+        String formattedString = Main.date(dateString);
+        assertEquals("01 marzo 2023", formattedString);
     }
 
     @Test
-    public void testInvalidDateString() {
-        String invalidDateString = "invalid_date_string";
-        OffsetDateTime dateTime = null;
-
-        try {
-            dateTime = OffsetDateTime.parse(invalidDateString);
-        } catch (Exception e) {
-
-        }
-
-        assertEquals(null, dateTime);
+    public void testDate_whenTimeChange() {
+        String dateString = "2023-03-01T18:00:00Z";
+        String formattedString = Main.date(dateString);
+        assertEquals("01 marzo 2023", formattedString);
     }
+
+    @Test
+    public void testDate_changeMonth() {
+        String dateString = "2023-05-01T18:00:00Z";
+        String formattedString = Main.date(dateString);
+        assertEquals("01 maggio 2023", formattedString);
+    }
+
+    @Test
+    public void testDate_invalidData() {
+        String dateString = "2023-14-01T18:00:00Z";
+        assertThrows(DateTimeException.class, () -> Main.date(dateString));
+    }
+
 }
